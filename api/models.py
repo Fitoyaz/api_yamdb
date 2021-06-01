@@ -17,7 +17,8 @@ class Review(models.Model):
         verbose_name='Тема отзыва',
         help_text='Напишите тему отзыва',
     )
-    review_discriprion = models.TextField(
+    review_discriprion = models.CharField(
+        max_length=300,
         verbose_name='Описание отзыва',
         help_text='Напишите отзыв',
 
@@ -34,7 +35,8 @@ class Comments(models.Model):
     titles = models.ForeignKey(
         Titles, on_delete=models.CASCADE, related_name='comments'
     )
-    text = models.TextField(
+    text = models.CharField(
+        max_length=300,
         verbose_name='Описание комментария',
         help_text='Напишите комментарий',
     )
