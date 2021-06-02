@@ -5,6 +5,12 @@ from django.db import models
 User = get_user_model()
 
 
+class UserRole(models.TextChoices):
+    USER = 'user'
+    MODERATOR = 'moderator'
+    ADMIN = 'admin'
+
+
 class Review(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='reviews'
@@ -28,12 +34,12 @@ class Review(models.Model):
     )
 
 
-class Comments(models.Model):
+class Comment(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='comments'
     )
-    titles = models.ForeignKey(
-        Titles, on_delete=models.CASCADE, related_name='comments'
+    review = models.ForeignKey(
+        Review, on_delete=models.CASCADE, related_name='comments'
     )
     text = models.CharField(
         max_length=300,
