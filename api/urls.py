@@ -3,11 +3,13 @@ from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import (TokenObtainPairView,
                                             TokenRefreshView)
 
-from .views import UserViewSet, return_token, send_code
+from .views import UserViewSet, MeViewSet, return_token, send_code
 
 router_v1 = DefaultRouter()
 
+router_v1.register('users/me', MeViewSet, basename='MeApi')
 router_v1.register('users', UserViewSet, basename='UsersApi')
+
 
 urlpatterns = [
     path('v1/', include(router_v1.urls)),

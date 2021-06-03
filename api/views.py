@@ -1,4 +1,5 @@
 from django.core.mail import send_mail
+from django.http import request
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import (filters, mixins, permissions, serializers, status,
@@ -9,7 +10,7 @@ from rest_framework.response import Response
 from .auth_functions import generate_random_string, get_tokens_for_user
 from .models import ConfCode, User
 from .permissions import IsAdmin, IsModerator, IsOwnerOrReadOnly
-from .serializers import UserSerializer
+from .serializers import MeSerializer, UserSerializer
 
 
 @api_view(['POST'])
@@ -68,7 +69,7 @@ def return_token(request):
                 st = status.HTTP_200_OK
             else:
                 st = status.HTTP_204_NO_CONTENT
-            response = {"message": "wrong conf code"}
+                response = {"message": "wrong conf code"}
         else:
             st = status.HTTP_404_NOT_FOUND
             response = {"message": "email not found"}
@@ -79,8 +80,30 @@ def return_token(request):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAdmin]
+   # permission_classes = [IsAdmin]
     queryset = User.objects.all()
     serializer_class = UserSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['username', ]
+
+
+class MeViewSet(
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet
+):    
+  #  permission_classes = [IsOwnerOrReadOnly]
+  #  def get_queryset(self):
+  #     user = self.request.user
+  #      print(user.username)
+  #      return user
+    class ListModelMixin:    
+        def retrieve(self, request, *args, **kwargs):
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            return Response(serializer.data)
+    def get_queryset(self):
+        user = self.request.user
+        return user
+    serializer_class = MeSerializer   

@@ -10,6 +10,7 @@ class User(AbstractUser):
         ('admin', 'admin'),
     )
     role = models.CharField(max_length=50, choices=ROLES, default='user')
+    bio = models.TextField(max_length=500, null=True)
 
 
 class ConfCode(models.Model):
