@@ -2,8 +2,6 @@ from django.contrib.auth import get_user_model
 
 from rest_framework import serializers
 
-# from rest_framework.validators import UniqueTogetherValidator
-
 from api.models import Categories
 from api.models import Genres
 from api.models import Titles
@@ -25,14 +23,6 @@ class GenresSerializer(serializers.ModelSerializer):
         fields = ('__all__')
 
 
-# class PostSerializer(serializers.ModelSerializer):
-#     author = serializers.ReadOnlyField(source='author.username')
-
-#     class Meta:
-#         model = Post
-#         fields = ('id', 'text', 'author', 'group', 'pub_date')
-
-
 class TitlesSerializer(serializers.ModelSerializer):
     author = serializers.ReadOnlyField(source='author.username')
     user = serializers.SlugRelatedField(
@@ -47,16 +37,3 @@ class TitlesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Titles
         fields = ('__all__')
-        # validators = [
-        #     UniqueTogetherValidator(
-        #         queryset=Follow.objects.all(),
-        #         fields=['user', 'following']
-        #     )
-        # ]
-
-    def validate_following(self, following):
-        if self.context.get('request').method == 'POST':
-            if self.context.get('request').user == following:
-                raise serializers.ValidationError(
-                    'You can not follow to yourself.')
-        return following
