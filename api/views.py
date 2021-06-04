@@ -1,7 +1,6 @@
 from django.core.mail import send_mail
 from django.http import request
 from django.shortcuts import get_object_or_404
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import (filters, mixins, permissions, serializers, status,
                             viewsets)
 from rest_framework.decorators import api_view, permission_classes
@@ -20,10 +19,14 @@ def send_code(request):
         newmail = request.data['email']
         if User.objects.filter(email=newmail).count() > 0:
             user = get_object_or_404(User, email=newmail)
-            ucc = get_object_or_404(ConfCode, user=user)
-            ucc.email = newmail
-            ucc.eml_conf_code = eml_conf_code
-            ucc.save()
+            if ConfCode.objects.filter(user=user).count() > 0:
+                ucc = get_object_or_404(ConfCode, user=user)
+                ucc.email = newmail
+                ucc.eml_conf_code = eml_conf_code
+                ucc.save()
+            else:
+                ucc = ConfCode(email=newmail, eml_conf_code=eml_conf_code, user=user)
+                ucc.save()
         else:
             if ConfCode.objects.filter(email=newmail).count() == 0:
                 ucc = ConfCode(email=newmail, eml_conf_code=eml_conf_code)
@@ -82,13 +85,12 @@ def return_token(request):
 class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdmin]
     queryset = User.objects.all()
-    serializer_class = UserSerializer
-    filter_backends = [DjangoFilterBackend]
+    serializer_class = UserSerializer    
     filterset_fields = ['username', ]
 
 
 @api_view(['PATCH', 'GET'])
-@permission_classes([IsOwnerOrReadOnly])
+@permission_classes([permissions.IsAuthenticated])
 def MeDetail(request):
     user = request.user
     serializer = MeSerializer(user)
