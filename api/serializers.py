@@ -1,24 +1,39 @@
 
 from django_filters.filters import CharFilter
 from rest_framework import serializers, validators
-from rest_framework.fields import CharField, ReadOnlyField
-from .models import User, Review, Comment
-from api.models import Categories
-from api.models import Genres
-from api.models import Titles
+from rest_framework.fields import CharField, EmailField, ReadOnlyField
+
+from api.models import Categories, Genres, Titles
+
+from .models import Comment, Review, User
 
 
-class UserSerializer(serializers.ModelSerializer):    
+class UserSerializer(serializers.ModelSerializer):
+    username = CharField(
+        max_length=20,
+        validators=[validators.UniqueValidator(queryset=User.objects.all())],
+        required=True
+    )
+    email = EmailField(
+        required=True,
+        validators=[validators.UniqueValidator(queryset=User.objects.all())]
+    )
+
     class Meta:
-        fields = ('first_name', 'last_name', 'username', 'bio', 'email', 'role')
+        fields = (
+            'first_name', 'last_name', 'username', 'bio', 'email', 'role'
+        )
         model = User
+        lookup_field = 'username'
 
 
 class MeSerializer(serializers.ModelSerializer):
     role = ReadOnlyField()
-    
+
     class Meta:
-        fields = ('first_name', 'last_name', 'username', 'bio', 'email', 'role')
+        fields = (
+            'first_name', 'last_name', 'username', 'bio', 'email', 'role'
+        )
         model = User
 
 

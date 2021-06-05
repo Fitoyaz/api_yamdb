@@ -1,7 +1,5 @@
 from django.contrib.auth.models import AbstractUser
-
 from django.db import models
-
 from django.db.models.deletion import CASCADE
 
 
@@ -29,82 +27,6 @@ class UserRole(models.TextChoices):
     USER = 'user'
     MODERATOR = 'moderator'
     ADMIN = 'admin'
-
-
-class Review(models.Model):
-    author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='reviews'
-    )
-    titles = models.ForeignKey(
-        Titles, on_delete=models.CASCADE, related_name='reviews'
-    )
-    review_name = models.CharField(
-        max_length=300,
-        verbose_name='Тема отзыва',
-        help_text='Напишите тему отзыва',
-    )
-    review_discriprion = models.CharField(
-        max_length=300,
-        verbose_name='Описание отзыва',
-        help_text='Напишите отзыв',
-
-    )
-    created = models.DateTimeField(
-        'Дата добавления', auto_now_add=True, db_index=True
-    )
-
-
-class Comment(models.Model):
-    author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='comments'
-    )
-    review = models.ForeignKey(
-        Review, on_delete=models.CASCADE, related_name='comments'
-    )
-    text = models.CharField(
-        max_length=300,
-        verbose_name='Описание комментария',
-        help_text='Напишите комментарий',
-    )
-    created = models.DateTimeField(
-        'Дата добавления', auto_now_add=True, db_index=True
-    )
-class Categories(models.Model):
-    name = models.CharField(
-        max_length=50,
-        verbose_name='Название категории',
-        help_text='Напишите название категории',
-    )
-    slug = models.SlugField(
-        unique=True,
-        verbose_name='Идентификатор категории'
-    )
-    category_description = models.TextField(
-        verbose_name='Описание категории',
-        help_text='Дайте краткое описание категории'
-    )
-
-    class Meta:
-        ordering = ['name']
-
-
-class Genres(models.Model):
-    name = models.CharField(
-        max_length=50,
-        verbose_name='Название жанра',
-        help_text='Напишите название жанра',
-    )
-    slug = models.SlugField(
-        unique=True,
-        verbose_name='Идентификатор жанра'
-    )
-    genre_description = models.TextField(
-        verbose_name='Описание жанра',
-        help_text='Дайте краткое описание жанра'
-    )
-
-    class Meta:
-        ordering = ['name']
 
 
 class Titles(models.Model):
@@ -147,4 +69,82 @@ class Titles(models.Model):
                 name='unigue_category'
             ),
         ]
+        ordering = ['name']
+
+
+class Review(models.Model):
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='reviews'
+    )
+    titles = models.ForeignKey(
+        Titles, on_delete=models.CASCADE, related_name='reviews'
+    )
+    review_name = models.CharField(
+        max_length=300,
+        verbose_name='Тема отзыва',
+        help_text='Напишите тему отзыва',
+    )
+    review_discriprion = models.CharField(
+        max_length=300,
+        verbose_name='Описание отзыва',
+        help_text='Напишите отзыв',
+
+    )
+    created = models.DateTimeField(
+        'Дата добавления', auto_now_add=True, db_index=True
+    )
+
+
+class Comment(models.Model):
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='comments'
+    )
+    review = models.ForeignKey(
+        Review, on_delete=models.CASCADE, related_name='comments'
+    )
+    text = models.CharField(
+        max_length=300,
+        verbose_name='Описание комментария',
+        help_text='Напишите комментарий',
+    )
+    created = models.DateTimeField(
+        'Дата добавления', auto_now_add=True, db_index=True
+    )
+
+
+class Categories(models.Model):
+    name = models.CharField(
+        max_length=50,
+        verbose_name='Название категории',
+        help_text='Напишите название категории',
+    )
+    slug = models.SlugField(
+        unique=True,
+        verbose_name='Идентификатор категории'
+    )
+    category_description = models.TextField(
+        verbose_name='Описание категории',
+        help_text='Дайте краткое описание категории'
+    )
+
+    class Meta:
+        ordering = ['name']
+
+
+class Genres(models.Model):
+    name = models.CharField(
+        max_length=50,
+        verbose_name='Название жанра',
+        help_text='Напишите название жанра',
+    )
+    slug = models.SlugField(
+        unique=True,
+        verbose_name='Идентификатор жанра'
+    )
+    genre_description = models.TextField(
+        verbose_name='Описание жанра',
+        help_text='Дайте краткое описание жанра'
+    )
+
+    class Meta:
         ordering = ['name']

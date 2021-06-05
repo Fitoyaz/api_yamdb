@@ -39,12 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-<<<<<<< HEAD
-=======
-    # 'rest_framework.authtoken',
-    # 'django_filters',
-    # 'corsheaders',
->>>>>>> 4a4e8ca585b2ac6024779202979239dd2402796b
 ]
 
 MIDDLEWARE = [
@@ -131,36 +125,15 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/'),)
 
-<<<<<<< HEAD
-REST_FRAMEWORK = {
+REST_FRAMEWORK = {    
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 100
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
 
 AUTH_USER_MODEL = 'api.User'
-=======
-MEDIA_URL = '/api/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',
-    ],
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ]
-}
-
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': dt.timedelta(minutes=60),
-}
-
-# Обработка запросов, приходящих с любого хоста, игнорируя политику Some Origin
-# True - разрешена, False - запрещена.
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_URLS_REGEX = r'^/api/.*$'
->>>>>>> 4a4e8ca585b2ac6024779202979239dd2402796b

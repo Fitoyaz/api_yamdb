@@ -1,15 +1,22 @@
 from django.core.mail import send_mail
-from django.http import request
 from django.shortcuts import get_object_or_404
-from rest_framework import (filters, mixins, permissions, serializers, status,
-                            viewsets)
+from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import (IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 
+from api.models import Categories, Genres, Titles
+from api.permissions import IsAdmin, IsAdminOrReadOnly
+from api.serializers import (CategoriesSerializer, GenresSerializer,
+                             TitlesSerializer)
+
 from .auth_functions import generate_random_string, get_tokens_for_user
-from .models import ConfCode, User
-from .permissions import IsAdmin, IsModerator, IsOwnerOrReadOnly
-from .serializers import MeSerializer, UserSerializer
+from .models import ConfCode, Review, User
+from .permissions import (IsAdmin, IsModerator, IsOwnerOrReadOnly,
+                          ReviewOwnerPermission)
+from .serializers import (CommentsSerializer, MeSerializer, ReviewsSerializer,
+                          UserSerializer)
 
 
 @api_view(['POST'])
@@ -25,7 +32,11 @@ def send_code(request):
                 ucc.eml_conf_code = eml_conf_code
                 ucc.save()
             else:
-                ucc = ConfCode(email=newmail, eml_conf_code=eml_conf_code, user=user)
+                ucc = ConfCode(
+                    email=newmail,
+                    eml_conf_code=eml_conf_code,
+                    user=user
+                )
                 ucc.save()
         else:
             if ConfCode.objects.filter(email=newmail).count() == 0:
@@ -85,8 +96,8 @@ def return_token(request):
 class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdmin]
     queryset = User.objects.all()
-    serializer_class = UserSerializer    
-    filterset_fields = ['username', ]
+    serializer_class = UserSerializer
+    lookup_field = 'username'    
 
 
 @api_view(['PATCH', 'GET'])
@@ -104,15 +115,7 @@ def MeDetail(request):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from .models import Review
-from .permissions import ReviewOwnerPermission
-from .serializers import (
-    ReviewsSerializer,
-    CommentsSerializer,
-)
+
 
 
 class ReviewDetailViewSet(viewsets.ModelViewSet):
@@ -141,25 +144,6 @@ class ReviewCommentDetailViewSet(viewsets.ModelViewSet):
         review = get_object_or_404(Review, pk=self.kwargs.get('review_id'),
                                    title=self.kwargs.get('title_id'))
         serializer.save(author=self.request.user, review=review)
-from django.contrib.auth import get_user_model
-
-from django.shortcuts import get_object_or_404
-
-from rest_framework import mixins
-from rest_framework import viewsets
-
-from api.models import Categories
-from api.models import Genres
-from api.models import Titles
-
-from api.permissions import IsAdmin
-from api.permissions import IsAdminOrReadOnly
-
-from api.serializers import CategoriesSerializer
-from api.serializers import GenresSerializer
-from api.serializers import TitlesSerializer
-
-User = get_user_model()
 
 
 class CategoriesViewSet(mixins.CreateModelMixin,  # POST-запросы
