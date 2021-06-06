@@ -151,16 +151,9 @@ class CategoriesViewSet(ListCreateDestroyViewSet):
     serializer_class = CategoriesSerializer
 
 
-# class GenresViewSet(viewsets.ModelViewSet):
-class GenresViewSet(mixins.CreateModelMixin,  # POST-запросы
-                    mixins.RetrieveModelMixin,  # GET-запросы
-                    mixins.ListModelMixin,  # только для чтения
-                    viewsets.GenericViewSet):
+class GenresViewSet(ListCreateDestroyViewSet):
     queryset = Genres.objects.all()
     serializer_class = GenresSerializer
-    permission_classes = [IsAdminOrReadOnly, ]
-    filter_backends = [filters.SearchFilter]
-    search_fields = ('name', 'slug')
 
 
 # class GenreDelViewSet(viewsets.ModelViewSet):
