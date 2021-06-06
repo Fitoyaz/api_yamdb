@@ -1,6 +1,6 @@
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
-from rest_framework import mixins, permissions, status, viewsets
+from rest_framework import mixins, permissions, status, viewsets, filters
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import (IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
@@ -17,6 +17,7 @@ from .permissions import (IsAdmin, IsModerator, IsOwnerOrReadOnly,
                           ReviewOwnerPermission)
 from .serializers import (CommentsSerializer, MeSerializer, ReviewsSerializer,
                           UserSerializer)
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 @api_view(['POST'])
@@ -153,6 +154,8 @@ class CategoriesViewSet(mixins.CreateModelMixin,  # POST-запросы
     queryset = Categories.objects.all()
     serializer_class = CategoriesSerializer
     permission_classes = [IsAdminOrReadOnly, ]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name',]
 
 
 class CategoryDelViewSet(mixins.DestroyModelMixin,  # DELETE-запросы

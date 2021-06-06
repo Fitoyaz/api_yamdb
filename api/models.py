@@ -116,7 +116,7 @@ class Categories(models.Model):
     name = models.CharField(
         max_length=50,
         verbose_name='Название категории',
-        help_text='Напишите название категории',
+        help_text='Напишите название категории',        
     )
     slug = models.SlugField(
         unique=True,
@@ -124,7 +124,8 @@ class Categories(models.Model):
     )
     category_description = models.TextField(
         verbose_name='Описание категории',
-        help_text='Дайте краткое описание категории'
+        help_text='Дайте краткое описание категории',        
+        blank=True
     )
 
     class Meta:

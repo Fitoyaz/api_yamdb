@@ -59,13 +59,14 @@ class CommentsSerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
         model = Comment
-
+        
 
 class CategoriesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Categories
-        fields = ('__all__')
+        fields = ('name', 'slug')
+        lookup_field = 'slug'
 
 
 class GenresSerializer(serializers.ModelSerializer):

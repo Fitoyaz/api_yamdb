@@ -5,13 +5,13 @@ from .models import UserRole
 
 class IsAdminOrReadOnly(permissions.BasePermission):
 
-    def has_object_permission(self, request, view, obj):
-        if request.user.role == 'admin' or request.user.is_superuser:
-            return True
-        elif request.method in permissions.SAFE_METHODS:
-            return True
-        else:
-            return False
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+             return True
+        if request.user.is_authenticated:
+            if request.user.role == 'admin' or request.user.is_superuser:
+                return True
+        return False
 
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
