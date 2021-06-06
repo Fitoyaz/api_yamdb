@@ -42,7 +42,8 @@ class ReviewsSerializer(serializers.ModelSerializer):
         read_only=True,
         slug_field='username'
     )
-    title = serializers.ReadOnlyField(source='post_id')
+    title = serializers.SlugRelatedField(
+        slug_field='id', read_only=True)
 
     class Meta:
         fields = '__all__'
@@ -54,7 +55,8 @@ class CommentsSerializer(serializers.ModelSerializer):
         read_only=True,
         slug_field='username'
     )
-    title = serializers.ReadOnlyField(source='post_id')
+    review = serializers.SlugRelatedField(
+        slug_field='id', read_only=True)
 
     class Meta:
         fields = '__all__'
@@ -87,12 +89,12 @@ class TitlesSerializer(serializers.ModelSerializer):
     genre = serializers.SlugRelatedField(
         many=True,
         slug_field='slug',
-        queryset = Genres.objects.all()
+        queryset=Genres.objects.all()
     )
     category = serializers.SlugRelatedField(
         many=False,
         slug_field='slug',
-        queryset = Categories.objects.all()
+        queryset=Categories.objects.all()
     )
     
     # author = serializers.ReadOnlyField(source='author.username')

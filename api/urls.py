@@ -13,7 +13,7 @@ router_v1 = DefaultRouter()
 
 router_v1.register('users', UserViewSet, basename='UsersApi')
 router_v1.register(r'titles/(?P<title_id>\d+)/reviews',
-                   ReviewDetailViewSet, basename='review')
+                   ReviewDetailViewSet, basename='reviews')
 router_v1.register(r'titles/(?P<title_id>\d+)/reviews/('
                    r'?P<review_id>\d+)/comments',
                    ReviewCommentDetailViewSet, basename="reviews_comments")

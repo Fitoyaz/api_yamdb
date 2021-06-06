@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models.deletion import CASCADE
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 class User(AbstractUser):
@@ -65,7 +66,6 @@ class Titles(models.Model):
     def __str__(self) -> str:
         return self.name
 
-
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -83,6 +83,14 @@ class Review(models.Model):
     titles = models.ForeignKey(
         Titles, on_delete=models.CASCADE, related_name='reviews'
     )
+    score = models.PositiveSmallIntegerField(
+        verbose_name='Оценка',
+        validators=[
+            MinValueValidator(1, 'Оценка не может быть меньше 1'),
+            MaxValueValidator(10, 'Оценка не может быть выше 10')
+        ]
+    )
+
     review_name = models.CharField(
         max_length=300,
         verbose_name='Тема отзыва',
