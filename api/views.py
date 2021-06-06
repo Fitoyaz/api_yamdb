@@ -7,16 +7,16 @@ from rest_framework.permissions import (IsAuthenticated,
 from rest_framework.response import Response
 
 from api.models import Categories, Genres, Titles
-from api.permissions import IsAdmin, IsAdminOrReadOnly
+from api.permissions import IsAdminOrReadOnly, IsAdminRole, \
+    IsStaffOrOwnerOrReadOnly
 from api.serializers import (CategoriesSerializer, GenresSerializer,
                              TitlesSerializer)
 
 from api.auth_functions import generate_random_string, get_tokens_for_user
 from api.models import ConfCode, Review, User
-from api.permissions import (IsAdmin, IsModerator, IsOwnerOrReadOnly,
-                          ReviewOwnerPermission)
-from api.serializers import (CommentsSerializer, MeSerializer, ReviewsSerializer,
-                          UserSerializer)
+
+from api.serializers import (CommentsSerializer, MeSerializer,
+                             ReviewsSerializer, UserSerializer)
 from django_filters.rest_framework import DjangoFilterBackend
 
 
@@ -95,7 +95,7 @@ def return_token(request):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAdmin]
+    permission_classes = [IsAdminRole]
     queryset = User.objects.all()
     serializer_class = UserSerializer
     lookup_field = 'username'    
@@ -119,7 +119,7 @@ def MeDetail(request):
 
 class ReviewDetailViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewsSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, ReviewOwnerPermission]
+    permission_classes = [IsStaffOrOwnerOrReadOnly]
 
     def get_queryset(self):
         title = get_object_or_404(Titles, pk=self.kwargs.get('title_id'))
@@ -132,7 +132,7 @@ class ReviewDetailViewSet(viewsets.ModelViewSet):
 
 class ReviewCommentDetailViewSet(viewsets.ModelViewSet):
     serializer_class = CommentsSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, ReviewOwnerPermission]
+    permission_classes = [IsStaffOrOwnerOrReadOnly]
 
     def get_queryset(self):
         review = get_object_or_404(Review, pk=self.kwargs.get('review_id'),
@@ -161,7 +161,7 @@ class CategoriesViewSet(mixins.CreateModelMixin,  # POST-запросы
 class CategoryDelViewSet(mixins.DestroyModelMixin,  # DELETE-запросы
                          viewsets.GenericViewSet):
     serializer_class = CategoriesSerializer
-    permission_classes = [IsAdmin, ]
+    permission_classes = [IsAdminRole, ]
 
     def get_queryset(self):
         queryset = get_object_or_404(Categories, id=self.kwargs['id'])
@@ -184,7 +184,7 @@ class GenresViewSet(mixins.CreateModelMixin,  # POST-запросы
 class GenreDelViewSet(mixins.DestroyModelMixin,  # DELETE-запросы
                       viewsets.GenericViewSet):
     serializer_class = GenresSerializer
-    permission_classes = [IsAdmin, ]
+    permission_classes = [IsAdminRole, ]
 
     def get_queryset(self):
         queryset = get_object_or_404(Genres, id=self.kwargs['id'])
