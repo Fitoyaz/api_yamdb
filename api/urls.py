@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter, Route
 from rest_framework_simplejwt.views import (TokenObtainPairView,
                                             TokenRefreshView)
 
-from api.views import (CategoriesViewSet, CategoryDelViewSet, GenreDelViewSet,
+from api.views import (CategoriesViewSet, GenreDelViewSet,
                        GenresViewSet, TitlesViewSet, TitleViewSet)
 
 from .views import (MeDetail, ReviewCommentDetailViewSet, ReviewDetailViewSet,
@@ -18,11 +18,11 @@ router_v1.register(r'titles/(?P<title_id>\d+)/reviews/('
                    r'?P<review_id>\d+)/comments',
                    ReviewCommentDetailViewSet, basename="reviews_comments")
 router_v1.register('categories', CategoriesViewSet, basename='category')
-router_v1.register(
-    'categories/<slug:slug>/',
-    CategoryDelViewSet,
-    basename='del_cat'
-)
+# router_v1.register(
+#     'categories/<slug:slug>/',
+#     CategoryDelViewSet,
+#     basename='del_cat'
+#)
 router_v1.register('genres', GenresViewSet, basename='genre')
 router_v1.register(
     'genres/<slug:slug>/',
@@ -31,7 +31,7 @@ router_v1.register(
 )
 router_v1.register('titles', TitlesViewSet, basename='title')
 router_v1.register(
-    r'titles/(?P<id>[0-9]+)',
+    r'titles/(?P<id>[0-9]+)/',
     TitleViewSet,
     basename='comment_s'
 )

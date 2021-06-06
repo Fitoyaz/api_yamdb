@@ -6,6 +6,7 @@ from rest_framework.permissions import (IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 
+from api.mine_viewsets import ListCreateDestroyViewSet
 from api.models import Categories, Genres, Titles
 from api.permissions import IsAdminOrReadOnly, IsAdminRole, \
     IsStaffOrOwnerOrReadOnly
@@ -145,27 +146,9 @@ class ReviewCommentDetailViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user, review=review)
 
 
-# class CategoriesViewSet(viewsets.ModelViewSet):
-class CategoriesViewSet(mixins.CreateModelMixin,  # POST-запросы
-                        mixins.RetrieveModelMixin,  # GET-запросы
-                        mixins.ListModelMixin,  # только для чтения
-                        viewsets.GenericViewSet):
+class CategoriesViewSet(ListCreateDestroyViewSet):
     queryset = Categories.objects.all()
     serializer_class = CategoriesSerializer
-    permission_classes = [IsAdminOrReadOnly, ]
-    filter_backends = [filters.SearchFilter]
-    search_fields = ('name', 'slug')
-
-
-# class CategoryDelViewSet(viewsets.ModelViewSet):
-class CategoryDelViewSet(mixins.DestroyModelMixin,  # DELETE-запросы
-                         viewsets.GenericViewSet):
-    serializer_class = CategoriesSerializer
-    permission_classes = [IsAdminRole, ]
-
-    def get_queryset(self):
-        queryset = get_object_or_404(Categories, id=self.kwargs['id'])
-        return queryset
 
 
 # class GenresViewSet(viewsets.ModelViewSet):

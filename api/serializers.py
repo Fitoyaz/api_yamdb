@@ -1,5 +1,4 @@
-
-from django_filters.filters import CharFilter
+from django.db.models import Avg
 from rest_framework import serializers, validators
 from rest_framework.fields import CharField, EmailField, ReadOnlyField
 
@@ -86,6 +85,7 @@ class GenresSerializer(serializers.ModelSerializer):
 
 
 class TitlesSerializer(serializers.ModelSerializer):
+    rating = serializers.SerializerMethodField(read_only=True)
     genre = serializers.SlugRelatedField(
         many=True,
         slug_field='slug',
@@ -96,6 +96,21 @@ class TitlesSerializer(serializers.ModelSerializer):
         slug_field='slug',
         queryset=Categories.objects.all()
     )
+
+    class Meta:
+        fields = (
+            'id', 'name', 'year',
+            'rating', 'description',
+            'genre', 'category'
+        )
+        model = Titles
+
+    def get_rating(self, titles):
+        scores = Review.objects.filter(
+            titles_id=titles.id).aggregate(Avg('score'))
+        if scores:
+            return scores['score__avg']
+        return None
     
     # author = serializers.ReadOnlyField(source='author.username')
     # user = serializers.SlugRelatedField(
@@ -106,7 +121,3 @@ class TitlesSerializer(serializers.ModelSerializer):
     # following = serializers.SlugRelatedField(
     #     slug_field='username',
     #     queryset=User.objects.all())
-
-    class Meta:
-        model = Titles
-        fields = ('__all__')
