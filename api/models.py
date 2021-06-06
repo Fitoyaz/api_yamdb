@@ -107,6 +107,10 @@ class Review(models.Model):
         'Дата добавления', auto_now_add=True, db_index=True
     )
 
+    class Meta:
+        unique_together = ["titles", "author"]
+        ordering = ["created"]
+
 
 class Comment(models.Model):
     author = models.ForeignKey(
@@ -123,6 +127,9 @@ class Comment(models.Model):
     created = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True
     )
+
+    class Meta:
+        ordering = ["created"]
 
 
 class Categories(models.Model):
