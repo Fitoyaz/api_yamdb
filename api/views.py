@@ -11,11 +11,11 @@ from api.permissions import IsAdmin, IsAdminOrReadOnly
 from api.serializers import (CategoriesSerializer, GenresSerializer,
                              TitlesSerializer)
 
-from .auth_functions import generate_random_string, get_tokens_for_user
-from .models import ConfCode, Review, User
-from .permissions import (IsAdmin, IsModerator, IsOwnerOrReadOnly,
+from api.auth_functions import generate_random_string, get_tokens_for_user
+from api.models import ConfCode, Review, User
+from api.permissions import (IsAdmin, IsModerator, IsOwnerOrReadOnly,
                           ReviewOwnerPermission)
-from .serializers import (CommentsSerializer, MeSerializer, ReviewsSerializer,
+from api.serializers import (CommentsSerializer, MeSerializer, ReviewsSerializer,
                           UserSerializer)
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -147,6 +147,7 @@ class ReviewCommentDetailViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user, review=review)
 
 
+# class CategoriesViewSet(viewsets.ModelViewSet):
 class CategoriesViewSet(mixins.CreateModelMixin,  # POST-запросы
                         mixins.RetrieveModelMixin,  # GET-запросы
                         mixins.ListModelMixin,  # только для чтения
@@ -155,9 +156,10 @@ class CategoriesViewSet(mixins.CreateModelMixin,  # POST-запросы
     serializer_class = CategoriesSerializer
     permission_classes = [IsAdminOrReadOnly, ]
     filter_backends = [filters.SearchFilter]
-    search_fields = ['name',]
+    search_fields = ('name', 'slug')
 
 
+# class CategoryDelViewSet(viewsets.ModelViewSet):
 class CategoryDelViewSet(mixins.DestroyModelMixin,  # DELETE-запросы
                          viewsets.GenericViewSet):
     serializer_class = CategoriesSerializer
@@ -168,6 +170,7 @@ class CategoryDelViewSet(mixins.DestroyModelMixin,  # DELETE-запросы
         return queryset
 
 
+# class GenresViewSet(viewsets.ModelViewSet):
 class GenresViewSet(mixins.CreateModelMixin,  # POST-запросы
                     mixins.RetrieveModelMixin,  # GET-запросы
                     mixins.ListModelMixin,  # только для чтения
@@ -175,8 +178,11 @@ class GenresViewSet(mixins.CreateModelMixin,  # POST-запросы
     queryset = Genres.objects.all()
     serializer_class = GenresSerializer
     permission_classes = [IsAdminOrReadOnly, ]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ('name', 'slug')
 
 
+# class GenreDelViewSet(viewsets.ModelViewSet):
 class GenreDelViewSet(mixins.DestroyModelMixin,  # DELETE-запросы
                       viewsets.GenericViewSet):
     serializer_class = GenresSerializer
@@ -187,6 +193,7 @@ class GenreDelViewSet(mixins.DestroyModelMixin,  # DELETE-запросы
         return queryset
 
 
+# class TitlesViewSet(viewsets.ModelViewSet):
 class TitlesViewSet(mixins.CreateModelMixin,  # POST-запросы
                     mixins.RetrieveModelMixin,  # GET-запросы
                     mixins.ListModelMixin,  # только для чтения
@@ -194,6 +201,8 @@ class TitlesViewSet(mixins.CreateModelMixin,  # POST-запросы
     queryset = Titles.objects.all()
     serializer_class = TitlesSerializer
     permission_classes = [IsAdminOrReadOnly, ]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ('name', 'year', 'category__slug', 'genre__slug')
 
 
 class TitleViewSet(mixins.RetrieveModelMixin,  # GET-запросы

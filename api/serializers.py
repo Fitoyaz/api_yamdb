@@ -67,25 +67,43 @@ class CategoriesSerializer(serializers.ModelSerializer):
         model = Categories
         fields = ('name', 'slug')
         lookup_field = 'slug'
+        extra_kwargs = {
+            'url': {'lookup_field': 'slug'}
+        }
 
 
 class GenresSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Genres
-        fields = ('__all__')
+        fields = ('name', 'slug')
+        lookup_field = 'slug'
+        extra_kwargs = {
+            'url': {'lookup_field': 'slug'}
+        }
 
 
 class TitlesSerializer(serializers.ModelSerializer):
-    author = serializers.ReadOnlyField(source='author.username')
-    user = serializers.SlugRelatedField(
-        slug_field='username',
-        read_only=True,
-        default=serializers.CurrentUserDefault()
+    genre = serializers.SlugRelatedField(
+        many=True,
+        slug_field='slug',
+        queryset = Genres.objects.all()
     )
-    following = serializers.SlugRelatedField(
-        slug_field='username',
-        queryset=User.objects.all())
+    category = serializers.SlugRelatedField(
+        many=False,
+        slug_field='slug',
+        queryset = Categories.objects.all()
+    )
+    
+    # author = serializers.ReadOnlyField(source='author.username')
+    # user = serializers.SlugRelatedField(
+    #     slug_field='username',
+    #     read_only=True,
+    #     default=serializers.CurrentUserDefault()
+    # )
+    # following = serializers.SlugRelatedField(
+    #     slug_field='username',
+    #     queryset=User.objects.all())
 
     class Meta:
         model = Titles

@@ -62,6 +62,10 @@ class Titles(models.Model):
         help_text='Выберите категорию произведения'
     )
 
+    def __str__(self) -> str:
+        return self.name
+
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
