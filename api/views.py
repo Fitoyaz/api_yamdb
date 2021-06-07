@@ -2,8 +2,6 @@ from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from rest_framework import mixins, permissions, status, viewsets, filters
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import (IsAuthenticated,
-                                        IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 
 from api.mine_viewsets import ListCreateDestroyViewSet
@@ -19,79 +17,48 @@ from api.models import ConfCode, Review, User
 from api.serializers import (CommentsSerializer, MeSerializer,
                              ReviewsSerializer, UserSerializer)
 from django_filters.rest_framework import DjangoFilterBackend
+from django.contrib.auth.tokens import default_token_generator
+from rest_framework_simplejwt.tokens import RefreshToken
+import string
 
 
 @api_view(['POST'])
 def send_code(request):
-    if 'email' in request.data:
-        eml_conf_code = generate_random_string(3)
-        newmail = request.data['email']
-        if User.objects.filter(email=newmail).count() > 0:
-            user = get_object_or_404(User, email=newmail)
-            if ConfCode.objects.filter(user=user).count() > 0:
-                ucc = get_object_or_404(ConfCode, user=user)
-                ucc.email = newmail
-                ucc.eml_conf_code = eml_conf_code
-                ucc.save()
-            else:
-                ucc = ConfCode(
-                    email=newmail,
-                    eml_conf_code=eml_conf_code,
-                    user=user
-                )
-                ucc.save()
-        else:
-            if ConfCode.objects.filter(email=newmail).count() == 0:
-                ucc = ConfCode(email=newmail, eml_conf_code=eml_conf_code)
-                ucc.save()
-            else:
-                ucc = ConfCode.objects.filter(email=newmail)[0]
-                ucc.eml_conf_code = eml_conf_code
-                ucc.save()
-
-        send_mail(
-            'confirmation',
-            eml_conf_code,
-            'from@example.com',
-            [f'{newmail}'],
-            fail_silently=False,
-        )
-        st = status.HTTP_200_OK
-        response = {"email": newmail}
-    else:
-        st = status.HTTP_400_BAD_REQUEST
-        response = request.data
-    return Response(response, status=st)
+    if not request.data.get('email'):        
+        return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+    newmail = request.data.get('email')
+    user, created = User.objects.get_or_create(email=newmail, 
+    defaults={'username': newmail, 'is_active': 0})
+    confirmation_code = default_token_generator.make_token(user)    
+    send_mail(
+        'confirmation',
+        confirmation_code,
+        'from@example.com',
+        [f'{newmail}'],
+        fail_silently=False,
+    )    
+    return Response(request.data, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
 def return_token(request):
-    if 'email' and 'confirmation_code' in request.data:
-        email = request.data['email']
-        eml_conf_code = request.data['confirmation_code']
-        if ConfCode.objects.filter(email=email).count() > 0:
-            ucc = ConfCode.objects.filter(email=email)[0]
-            if ucc.eml_conf_code == eml_conf_code:
-                if User.objects.filter(confcode=ucc).count() != 0:
-                    user = get_object_or_404(User, confcode=ucc)
-                else:
-                    user = User.objects.create(username=email)
-                    user.email = email
-                    user.save()
-                    ucc.user = user
-                    ucc.save()
-                token = get_tokens_for_user(user=user)
-                response = {"token": token}
-                st = status.HTTP_200_OK
-            else:
-                st = status.HTTP_204_NO_CONTENT
-                response = {"message": "wrong conf code"}
-        else:
-            st = status.HTTP_404_NOT_FOUND
-            response = {"message": "email not found"}
+    if not 'email' and 'confirmation_code' in request.data:
+        return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+    email = request.data.get('email')
+    confirmation_code = request.data.get('confirmation_code')
+    user = get_object_or_404(User, email=email)
+    if default_token_generator.check_token(user=user, token=confirmation_code):
+        if user.is_active == False:
+             user.is_activate = True
+             cleaner = str.maketrans(dict.fromkeys(string.punctuation))        
+             user.username = email.translate(cleaner)
+             user.save()
+        token = RefreshToken.for_user(user)
+        response = {"token": str(token)}
+        st = status.HTTP_200_OK
     else:
-        st = status.HTTP_400_BAD_REQUEST
-        response = request.data
+        st = status.HTTP_204_NO_CONTENT
+        response = {"message": "wrong conf code"}
     return Response(response, status=st)
 
 
