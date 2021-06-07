@@ -1,7 +1,8 @@
 from django.urls import include
 from django.urls import path
 
-from rest_framework.routers import DefaultRouter, Route
+from rest_framework.routers import DefaultRouter
+from rest_framework.routers import Route
 from rest_framework_simplejwt.views import (TokenObtainPairView,
                                             TokenRefreshView)
 
@@ -48,7 +49,6 @@ router_v1.register('titles', TitlesViewSet, basename='title')
 #     TitleViewSet,
 #     basename='comment_s'
 # )
-
 
 urlpatterns = [
 
