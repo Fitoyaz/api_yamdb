@@ -170,7 +170,7 @@ class TitlesViewSet(viewsets.ModelViewSet):
     # lookup_field = 'titles_id'
 
     def get_serializer_class(self):
-        if self.action == ('create' or 'partial_update'):
+        if self.action == 'create' or self.action == 'partial_update':
             return TitlesCreateSerializer
         return TitlesReadSerializer
 
