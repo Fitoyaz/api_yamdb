@@ -3,8 +3,9 @@ from django.urls import path
 
 from rest_framework.routers import DefaultRouter
 from rest_framework.routers import Route
-from rest_framework_simplejwt.views import (TokenObtainPairView,
-                                            TokenRefreshView)
+
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenRefreshView
 
 from api.views import CategoriesViewSet
 from api.views import GenresViewSet
