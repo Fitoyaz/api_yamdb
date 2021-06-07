@@ -19,6 +19,8 @@ from rest_framework.decorators import permission_classes
 
 from rest_framework.pagination import PageNumberPagination
 
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+
 from rest_framework.response import Response
 
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -29,6 +31,8 @@ from api.auth_functions import get_tokens_for_user
 from api.mine_viewsets import ListCreateDestroyViewSet
 
 from api.models import Categories, ConfCode, Review, User, Genres, Titles
+
+from api.filters import TitleFilter
 
 from api.permissions import IsAdminOrReadOnly
 from api.permissions import IsAdminRole
@@ -157,12 +161,13 @@ class GenreDelViewSet(mixins.DestroyModelMixin,  # DELETE-запросы
 
 class TitlesViewSet(viewsets.ModelViewSet):
     queryset = Titles.objects.all()
-    # permission_classes = [IsOwnerOrReadOnly, IsAuthenticatedOrReadOnly]
-    # serializer_class = TitlesReadeSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['name', 'year', 'category__slug', 'genre__slug']
-    lookup_field = 'titles_id'
+    permission_classes = [IsAdminOrReadOnly]
     pagination_class = PageNumberPagination
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = TitleFilter
+    
+    # filterset_fields = ['name', 'year', 'category__slug', 'genre__slug']
+    # lookup_field = 'titles_id'
 
     def get_serializer_class(self):
         if self.action == ('create' or 'partial_update'):
