@@ -4,7 +4,7 @@ from rest_framework_simplejwt.views import (TokenObtainPairView,
                                             TokenRefreshView)
 
 from api.views import (CategoriesViewSet, GenreDelViewSet,
-                       GenresViewSet, TitlesViewSet, TitleViewSet)
+                       GenresViewSet, TitlesViewSet)
 
 from .views import (MeDetail, ReviewCommentDetailViewSet, ReviewDetailViewSet,
                     UserViewSet, return_token, send_code)
@@ -30,11 +30,11 @@ router_v1.register(
     basename='del_genre'
 )
 router_v1.register('titles', TitlesViewSet, basename='title')
-router_v1.register(
-    r'titles/(?P<id>[0-9]+)/',
-    TitleViewSet,
-    basename='comment_s'
-)
+# router_v1.register(
+#     r'titles/(?P<id>[0-9]+)/',
+#     TitleViewSet,
+#     basename='comment_s'
+# )
 
 
 urlpatterns = [
