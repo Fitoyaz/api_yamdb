@@ -1,22 +1,35 @@
-from django.urls import include, path
+from django.urls import include
+from django.urls import path
+
 from rest_framework.routers import DefaultRouter, Route
 from rest_framework_simplejwt.views import (TokenObtainPairView,
                                             TokenRefreshView)
 
-from api.views import (CategoriesViewSet, GenreDelViewSet,
-                       GenresViewSet, TitlesViewSet)
+from api.views import CategoriesViewSet
+from api.views import GenresViewSet
+from api.views import GenreDelViewSet
+from api.views import MeDetail
+from api.views import ReviewCommentDetailViewSet
+from api.views import ReviewDetailViewSet
+from api.views import return_token
+from api.views import send_code
+from api.views import TitlesViewSet
+from api.views import UserViewSet
 
-from .views import (MeDetail, ReviewCommentDetailViewSet, ReviewDetailViewSet,
-                    UserViewSet, return_token, send_code)
 
 router_v1 = DefaultRouter()
 
 router_v1.register('users', UserViewSet, basename='UsersApi')
-router_v1.register(r'titles/(?P<title_id>\d+)/reviews',
-                   ReviewDetailViewSet, basename='reviews')
-router_v1.register(r'titles/(?P<title_id>\d+)/reviews/('
-                   r'?P<review_id>\d+)/comments',
-                   ReviewCommentDetailViewSet, basename="reviews_comments")
+router_v1.register(
+    r'titles/(?P<title_id>\d+)/reviews',
+    ReviewDetailViewSet,
+    basename='reviews'
+)
+router_v1.register(
+    r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)/comments',
+    ReviewCommentDetailViewSet,
+    basename="reviews_comments"
+)
 router_v1.register('categories', CategoriesViewSet, basename='category')
 # router_v1.register(
 #     'categories/<slug:slug>/',

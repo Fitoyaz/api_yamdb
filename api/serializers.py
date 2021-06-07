@@ -1,10 +1,18 @@
 from django.db.models import Avg
-from rest_framework import serializers, validators
-from rest_framework.fields import CharField, EmailField, ReadOnlyField
 
-from api.models import Categories, Genres, Titles
+from rest_framework import serializers
+from rest_framework import validators
 
-from .models import Comment, Review, User
+from rest_framework.fields import CharField
+from rest_framework.fields import EmailField
+from rest_framework.fields import ReadOnlyField
+
+from api.models import Categories
+from api.models import Comment
+from api.models import Genres
+from api.models import Review
+from api.models import Titles
+from api.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
