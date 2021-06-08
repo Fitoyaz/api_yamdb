@@ -75,11 +75,11 @@ def return_token(request):
     user = get_object_or_404(User, email=email)
     if default_token_generator.check_token(user=user, token=confirmation_code):
         if user.is_active == False:
-             user.is_activate = True
+             user.is_active = True
              cleaner = str.maketrans(dict.fromkeys(string.punctuation))        
              user.username = email.translate(cleaner)
              user.save()
-        token = RefreshToken.for_user(user)
+        token = RefreshToken.for_user(user).access_token
         response = {"token": str(token)}
         st = status.HTTP_200_OK
     else:
