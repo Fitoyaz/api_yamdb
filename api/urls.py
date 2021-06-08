@@ -18,7 +18,6 @@ from api.views import send_code
 from api.views import TitlesViewSet
 from api.views import UserViewSet
 
-
 router_v1 = DefaultRouter()
 
 router_v1.register('users', UserViewSet, basename='UsersApi')
@@ -33,23 +32,13 @@ router_v1.register(
     basename="reviews_comments"
 )
 router_v1.register('categories', CategoriesViewSet, basename='category')
-# router_v1.register(
-#     'categories/<slug:slug>/',
-#     CategoryDelViewSet,
-#     basename='del_cat'
-#)
 router_v1.register('genres', GenresViewSet, basename='genre')
 router_v1.register(
     'genres/<slug:slug>/',
     GenreDelViewSet,
     basename='del_genre'
-)
+    )
 router_v1.register('titles', TitlesViewSet, basename='title')
-# router_v1.register(
-#     r'titles/(?P<id>[0-9]+)/',
-#     TitleViewSet,
-#     basename='comment_s'
-# )
 
 urlpatterns = [
 

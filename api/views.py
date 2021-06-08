@@ -28,11 +28,16 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from api.auth_functions import generate_random_string
 from api.auth_functions import get_tokens_for_user
 
+from api.filters import TitleFilter
+
 from api.mine_viewsets import ListCreateDestroyViewSet
 
-from api.models import Categories, ConfCode, Review, User, Genres, Titles
-
-from api.filters import TitleFilter
+from api.models import Categories
+from api.models import ConfCode
+from api.models import Genres
+from api.models import Titles
+from api.models import Review
+from api.models import User
 
 from api.permissions import IsAdminOrReadOnly
 from api.permissions import IsAdminRole
@@ -129,13 +134,19 @@ class ReviewCommentDetailViewSet(viewsets.ModelViewSet):
     permission_classes = [IsStaffOrOwnerOrReadOnly]
 
     def get_queryset(self):
-        review = get_object_or_404(Review, pk=self.kwargs.get('review_id'),
-                                   title=self.kwargs.get('title_id'))
+        review = get_object_or_404(
+            Review,
+            pk=self.kwargs.get('review_id'),
+            title=self.kwargs.get('title_id')
+        )
         return review.comments.all()
 
     def perform_create(self, serializer):
-        review = get_object_or_404(Review, pk=self.kwargs.get('review_id'),
-                                   title=self.kwargs.get('title_id'))
+        review = get_object_or_404(
+            Review,
+            pk=self.kwargs.get('review_id'),
+            title=self.kwargs.get('title_id')
+        )
         serializer.save(author=self.request.user, review=review)
 
 
@@ -161,39 +172,12 @@ class GenreDelViewSet(mixins.DestroyModelMixin,  # DELETE-запросы
 
 class TitlesViewSet(viewsets.ModelViewSet):
     queryset = Titles.objects.all()
-    permission_classes = [IsAdminOrReadOnly]
     pagination_class = PageNumberPagination
+    permission_classes = [IsAdminOrReadOnly]
     filter_backends = [DjangoFilterBackend]
     filterset_class = TitleFilter
     
-    # filterset_fields = ['name', 'year', 'category__slug', 'genre__slug']
-    # lookup_field = 'titles_id'
-
     def get_serializer_class(self):
         if self.action == 'create' or self.action == 'partial_update':
             return TitlesCreateSerializer
         return TitlesReadSerializer
-
-# class TitlesViewSet(viewsets.ModelViewSet):
-# class TitlesViewSet(mixins.CreateModelMixin,  # POST-запросы
-#                     mixins.RetrieveModelMixin,  # GET-запросы
-#                     mixins.ListModelMixin,  # только для чтения
-#                     viewsets.GenericViewSet):
-#     queryset = Titles.objects.all()
-#     serializer_class = TitlesSerializer
-#     permission_classes = [IsAdminOrReadOnly, ]
-#     filter_backends = [filters.SearchFilter]
-#     search_fields = ('name', 'year', 'category__slug', 'genre__slug')
-
-
-# class TitleViewSet(mixins.RetrieveModelMixin,  # GET-запросы
-#                    mixins.UpdateModelMixin,  # PATCH-запросы
-#                    mixins.DestroyModelMixin,  # DELETE-запросы
-#                    mixins.ListModelMixin,  # только для чтения
-#                    viewsets.GenericViewSet):
-#     serializer_class = TitlesSerializer
-#     permission_classes = [IsAdminOrReadOnly, ]
-
-#     def get_queryset(self):
-#         queryset = get_object_or_404(Titles, id=self.kwargs['id'])
-#         return queryset

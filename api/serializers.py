@@ -124,13 +124,3 @@ class TitlesCreateSerializer(serializers.ModelSerializer):
         if scores:
             return scores['score__avg']
         return None
-
-# author = serializers.ReadOnlyField(source='author.username')
-    # user = serializers.SlugRelatedField(
-    #     slug_field='username',
-    #     read_only=True,
-    #     default=serializers.CurrentUserDefault()
-    # )
-    # following = serializers.SlugRelatedField(
-    #     slug_field='username',
-    #     queryset=User.objects.all())

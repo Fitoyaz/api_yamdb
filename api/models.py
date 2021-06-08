@@ -38,10 +38,8 @@ class Titles(models.Model):
     name = models.TextField(
         verbose_name='Название',
         help_text='Напишите здесь название произведения',
-    )
-    year = models.DecimalField(
-        max_digits=4,
-        decimal_places=0,
+    )   
+    year = models.IntegerField(
         verbose_name='Год выпуска',
         help_text='Напишите здесь год выпуска произведения',
     )
@@ -54,6 +52,8 @@ class Titles(models.Model):
         related_name='titles',
         symmetrical=False,
         db_table='title-genre-table',
+        # through='Genre_Titles',
+        # through_fields=('title', 'genre', ),
         verbose_name='Slug жанра',
         help_text='Выберите жанр произведения'
     )
@@ -82,10 +82,14 @@ class Titles(models.Model):
 
 class Review(models.Model):
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='reviews'
+        User,
+        on_delete=models.CASCADE,
+        related_name='reviews'
     )
     titles = models.ForeignKey(
-        Titles, on_delete=models.CASCADE, related_name='reviews'
+        Titles,
+        on_delete=models.CASCADE,
+        related_name='reviews'
     )
     score = models.PositiveSmallIntegerField(
         verbose_name='Оценка',
@@ -95,7 +99,6 @@ class Review(models.Model):
             MaxValueValidator(10, 'Оценка не может быть выше 10')
         ]
     )
-
     review_name = models.CharField(
         max_length=300,
         verbose_name='Тема отзыва',
