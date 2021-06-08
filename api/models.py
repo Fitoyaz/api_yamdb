@@ -86,7 +86,7 @@ class Review(models.Model):
         on_delete=models.CASCADE,
         related_name='reviews'
     )
-    titles = models.ForeignKey(
+    title = models.ForeignKey(
         Titles,
         on_delete=models.CASCADE,
         related_name='reviews'
@@ -103,19 +103,26 @@ class Review(models.Model):
         max_length=300,
         verbose_name='Тема отзыва',
         help_text='Напишите тему отзыва',
+        blank=True
     )
     review_discriprion = models.CharField(
         max_length=300,
         verbose_name='Описание отзыва',
         help_text='Напишите отзыв',
+        blank=True
 
     )
     created = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True
     )
+    text = models.TextField(
+        max_length=3000,
+        verbose_name='Тема отзыва',
+        help_text='Напишите тему отзыва'
+    )
 
     class Meta:
-        unique_together = ["titles", "author"]
+        unique_together = ["title", "author"]
         ordering = ["created"]
 
 
