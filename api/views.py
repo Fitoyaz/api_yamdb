@@ -50,7 +50,7 @@ def return_token(request):
     confirmation_code = request.data.get('confirmation_code')
     user = get_object_or_404(User, email=email)
     if default_token_generator.check_token(user=user, token=confirmation_code):
-        if user.is_active == False:
+        if user.is_active == 'False':
             user.is_active = True
             cleaner = str.maketrans(dict.fromkeys(string.punctuation))
             user.username = email.translate(cleaner)
