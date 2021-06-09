@@ -51,6 +51,7 @@ from api.serializers import ReviewsSerializer
 from api.serializers import TitlesCreateSerializer
 from api.serializers import TitlesReadSerializer
 from api.serializers import UserSerializer
+from api.serializers import BaseTitleSerializer
 
 
 @api_view(['POST'])
