@@ -13,7 +13,7 @@ class User(AbstractUser):
     role = models.CharField(max_length=50, choices=ROLES, default='user')
     bio = models.TextField(max_length=500, null=True)
 
-    class Meta:        
+    class Meta:
         ordering = ['username']
 
 
@@ -147,7 +147,7 @@ class Category(models.Model):
     name = models.CharField(
         max_length=50,
         verbose_name='Название категории',
-        help_text='Напишите название категории',        
+        help_text='Напишите название категории',
     )
     slug = models.SlugField(
         verbose_name='Идентификатор категории',
@@ -157,7 +157,7 @@ class Category(models.Model):
     )
     category_description = models.TextField(
         verbose_name='Описание категории',
-        help_text='Дайте краткое описание категории',        
+        help_text='Дайте краткое описание категории',
         blank=True
     )
 

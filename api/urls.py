@@ -28,8 +28,7 @@ router_v1.register(
 router_v1.register(
     'genres/<slug:slug>/',
     GenreDelViewSet,
-    basename='del_genre'
-    )
+    basename='del_genre')
 
 urlpatterns = [
     path('v1/users/me/', MeDetail, name='send_code'),

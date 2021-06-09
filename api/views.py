@@ -25,19 +25,20 @@ from api.serializers import (CategorySerializer, CommentsSerializer,
 
 @api_view(['POST'])
 def send_code(request):
-    if not request.data.get('email'):        
+    if not request.data.get('email'):
         return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
     newmail = request.data.get('email')
-    user, created = User.objects.get_or_create(email=newmail, 
-    defaults={'username': newmail, 'is_active': 0})
-    confirmation_code = default_token_generator.make_token(user)    
+    user, created = User.objects.get_or_create(email=newmail,
+                                               defaults={'username': newmail,
+                                                         'is_active': 0})
+    confirmation_code = default_token_generator.make_token(user)
     send_mail(
         'confirmation',
         confirmation_code,
         'from@example.com',
         [f'{newmail}'],
         fail_silently=False,
-    )    
+    )
     return Response(request.data, status=status.HTTP_200_OK)
 
 
@@ -50,10 +51,10 @@ def return_token(request):
     user = get_object_or_404(User, email=email)
     if default_token_generator.check_token(user=user, token=confirmation_code):
         if user.is_active == False:
-             user.is_active = True
-             cleaner = str.maketrans(dict.fromkeys(string.punctuation))        
-             user.username = email.translate(cleaner)
-             user.save()
+            user.is_active = True
+            cleaner = str.maketrans(dict.fromkeys(string.punctuation))
+            user.username = email.translate(cleaner)
+            user.save()
         token = RefreshToken.for_user(user).access_token
         response = {"token": str(token)}
         st = status.HTTP_200_OK
@@ -67,7 +68,7 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminRole]
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    lookup_field = 'username'    
+    lookup_field = 'username'
 
 
 @api_view(['PATCH', 'GET'])
@@ -88,13 +89,14 @@ def MeDetail(request):
 
 class ReviewDetailViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewsSerializer
+
     def get_permissions(self):
         if self.action == 'create':
             permission_classes = [IsAuthenticated]
         else:
             permission_classes = [IsStaffOrOwnerOrReadOnly]
         return [permission() for permission in permission_classes]
-        
+
     def get_queryset(self):
         title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
         return title.reviews.all()
@@ -117,7 +119,7 @@ class ReviewDetailViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
         serializer.save(author=self.request.user, title=title)
-   
+
 
 class ReviewCommentDetailViewSet(viewsets.ModelViewSet):
     serializer_class = CommentsSerializer
@@ -177,7 +179,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminOrReadOnly]
     filter_backends = [DjangoFilterBackend]
     filterset_class = TitleFilter
-    
+
     def get_serializer_class(self):
         if self.action == 'create' or self.action == 'partial_update':
             return TitlesCreateSerializer

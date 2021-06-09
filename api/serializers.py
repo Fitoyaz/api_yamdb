@@ -58,7 +58,7 @@ class CommentsSerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
         model = Comment
-        
+
 
 class CategorySerializer(serializers.ModelSerializer):
 
