@@ -7,11 +7,11 @@ from rest_framework.fields import CharField
 from rest_framework.fields import EmailField
 from rest_framework.fields import ReadOnlyField
 
-from api.models import Categories
+from api.models import Category
 from api.models import Comment
 from api.models import Genres
 from api.models import Review
-from api.models import Titles
+from api.models import Title
 from api.models import User
 
 
@@ -70,10 +70,10 @@ class CommentsSerializer(serializers.ModelSerializer):
         model = Comment
         
 
-class CategoriesSerializer(serializers.ModelSerializer):
+class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Categories
+        model = Category
         fields = ('name', 'slug')
         lookup_field = 'slug'
         extra_kwargs = {
@@ -93,10 +93,11 @@ class GenresSerializer(serializers.ModelSerializer):
 
 
 class TitlesReadSerializer(serializers.ModelSerializer):
-    category = CategoriesSerializer(read_only=True)
+    category = CategorySerializer(read_only=True)
     genre = GenresSerializer(many=True, read_only=True)
+
     class Meta:
-        model = Titles
+        model = Title
         fields = ('id', 'name', 'year', 'description', 'genre', 'category')
 
 
@@ -110,17 +111,17 @@ class TitlesCreateSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(
         many=False,
         slug_field='slug',
-        queryset=Categories.objects.all()
+        queryset=Category.objects.all()
     )
 
     class Meta:
-        model = Titles
+        model = Title
         fields = ('id', 'name', 'year', 'rating', 'description', 'genre',
                   'category')
 
-    def get_rating(self, titles):
+    def get_rating(self, title):
         scores = Review.objects.filter(
-            titles_id=titles.id).aggregate(Avg('score'))
+            title_id=title.id).aggregate(Avg('score'))
         if scores:
             return scores['score__avg']
         return None
