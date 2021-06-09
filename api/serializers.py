@@ -9,7 +9,7 @@ from rest_framework.fields import ReadOnlyField
 
 from api.models import Category
 from api.models import Comment
-from api.models import Genres
+from api.models import Genre
 from api.models import Review
 from api.models import Title
 from api.models import User
@@ -84,7 +84,7 @@ class CategorySerializer(serializers.ModelSerializer):
 class GenresSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Genres
+        model = Genre
         fields = ('name', 'slug')
         lookup_field = 'slug'
         extra_kwargs = {
@@ -106,7 +106,7 @@ class TitlesCreateSerializer(serializers.ModelSerializer):
     genre = serializers.SlugRelatedField(
         many=True,
         slug_field='slug',
-        queryset=Genres.objects.all()
+        queryset=Genre.objects.all()
     )
     category = serializers.SlugRelatedField(
         many=False,

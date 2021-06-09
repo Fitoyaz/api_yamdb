@@ -38,7 +38,8 @@ class Title(models.Model):
     name = models.TextField(
         verbose_name='Название',
         help_text='Напишите здесь название произведения',
-    )   
+    )
+    rating = models.FloatField(default=None, null=True, blank=True)
     year = models.IntegerField(
         verbose_name='Год выпуска',
         help_text='Напишите здесь год выпуска произведения',
@@ -48,10 +49,10 @@ class Title(models.Model):
         help_text='Напишите здесь название произведения',
     )
     genre = models.ManyToManyField(
-        'Genres',
+        'Genre',
         related_name='title',
         symmetrical=False,
-        db_table='title-genre-table',
+        #db_table='title-genre-table',
         # through='Genre_Titles',
         # through_fields=('title', 'genre', ),
         verbose_name='Slug жанра',
@@ -112,7 +113,7 @@ class Review(models.Model):
         help_text='Напишите отзыв',
         blank=True
     )
-    created = models.DateTimeField(
+    pub_date = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True
     )
     text = models.TextField(
@@ -123,7 +124,8 @@ class Review(models.Model):
 
     class Meta:
         unique_together = ["title", "author"]
-        ordering = ["created"]
+        ordering = ["pub_date"]
+
 
 
 class Comment(models.Model):
@@ -153,10 +155,10 @@ class Category(models.Model):
         help_text='Напишите название категории',        
     )
     slug = models.SlugField(
-        unique=True,
         verbose_name='Идентификатор категории',
         null=True,
-        blank=True
+        blank=True,
+        unique=True,
     )
     category_description = models.TextField(
         verbose_name='Описание категории',
@@ -168,15 +170,15 @@ class Category(models.Model):
         ordering = ['name']
 
 
-class Genres(models.Model):
+class Genre(models.Model):
     name = models.CharField(
         max_length=50,
         verbose_name='Название жанра',
         help_text='Напишите название жанра',
     )
     slug = models.SlugField(
+        verbose_name='Идентификатор жанра',
         unique=True,
-        verbose_name='Идентификатор жанра'
     )
     genre_description = models.TextField(
         verbose_name='Описание жанра',

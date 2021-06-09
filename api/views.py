@@ -1,5 +1,5 @@
 import string
-
+from django.db.models import Avg
 from django.core.mail import send_mail
 
 from django.contrib.auth.tokens import default_token_generator
@@ -34,7 +34,7 @@ from api.mine_viewsets import ListCreateDestroyViewSet
 
 from api.models import Category
 from api.models import ConfCode
-from api.models import Genres
+from api.models import Genre
 from api.models import Title
 from api.models import Review
 from api.models import User
@@ -142,12 +142,23 @@ class ReviewCommentDetailViewSet(viewsets.ModelViewSet):
         return review.comments.all()
 
     def perform_create(self, serializer):
+        title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
         review = get_object_or_404(
             Review,
             pk=self.kwargs.get('review_id'),
             title=self.kwargs.get('title_id')
         )
         serializer.save(author=self.request.user, review=review)
+        int_rating = Review.objects.filter(title=title).aggregate(Avg('score'))
+        title.rating = int_rating['score__avg']
+        title.save(update_fields=["rating"])
+
+    def perform_update(self, serializer):
+        serializer.save()
+        title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
+        int_rating = Review.objects.filter(title=title).aggregate(Avg('score'))
+        title.rating = int_rating['score__avg']
+        title.save(update_fields=["rating"])
 
 
 class CategoryViewSet(ListCreateDestroyViewSet):
@@ -156,7 +167,7 @@ class CategoryViewSet(ListCreateDestroyViewSet):
 
 
 class GenresViewSet(ListCreateDestroyViewSet):
-    queryset = Genres.objects.all()
+    queryset = Genre.objects.all()
     serializer_class = GenresSerializer
 
 
@@ -166,7 +177,7 @@ class GenreDelViewSet(mixins.DestroyModelMixin,  # DELETE-запросы
     permission_classes = [IsAdminRole, ]
 
     def get_queryset(self):
-        queryset = get_object_or_404(Genres, id=self.kwargs['id'])
+        queryset = get_object_or_404(Genre, id=self.kwargs['id'])
         return queryset
 
 
