@@ -34,7 +34,7 @@ class UserRole(models.TextChoices):
     ADMIN = 'admin'
 
 
-class Titles(models.Model):
+class Title(models.Model):
     name = models.TextField(
         verbose_name='Название',
         help_text='Напишите здесь название произведения',
@@ -49,7 +49,7 @@ class Titles(models.Model):
     )
     genre = models.ManyToManyField(
         'Genres',
-        related_name='titles',
+        related_name='title',
         symmetrical=False,
         db_table='title-genre-table',
         # through='Genre_Titles',
@@ -58,9 +58,9 @@ class Titles(models.Model):
         help_text='Выберите жанр произведения'
     )
     category = models.ForeignKey(
-        'Categories',
+        'Category',
         on_delete=models.SET_NULL,
-        related_name='titles',
+        related_name='title',
         blank=True,
         null=True,
         verbose_name='Slug категории',
@@ -87,9 +87,10 @@ class Review(models.Model):
         related_name='reviews'
     )
     title = models.ForeignKey(
-        Titles,
+        Title,
         on_delete=models.CASCADE,
-        related_name='reviews'
+        related_name='reviews',
+        null=True
     )
     score = models.PositiveSmallIntegerField(
         verbose_name='Оценка',
@@ -110,7 +111,6 @@ class Review(models.Model):
         verbose_name='Описание отзыва',
         help_text='Напишите отзыв',
         blank=True
-
     )
     created = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True
@@ -133,7 +133,7 @@ class Comment(models.Model):
     review = models.ForeignKey(
         Review, on_delete=models.CASCADE, related_name='comments'
     )
-    text = models.CharField(
+    text = models.TextField(
         max_length=300,
         verbose_name='Описание комментария',
         help_text='Напишите комментарий',
@@ -146,7 +146,7 @@ class Comment(models.Model):
         ordering = ["created"]
 
 
-class Categories(models.Model):
+class Category(models.Model):
     name = models.CharField(
         max_length=50,
         verbose_name='Название категории',
@@ -154,7 +154,9 @@ class Categories(models.Model):
     )
     slug = models.SlugField(
         unique=True,
-        verbose_name='Идентификатор категории'
+        verbose_name='Идентификатор категории',
+        null=True,
+        blank=True
     )
     category_description = models.TextField(
         verbose_name='Описание категории',

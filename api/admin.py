@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from api.models import Categories, Genres, Titles
+from api.models import Category, Genres, Title
 
 
 class CategoriesAdmin(admin.ModelAdmin):
@@ -29,6 +29,6 @@ class TitlesAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
 
-admin.site.register(Categories, CategoriesAdmin)
+admin.site.register(Category, CategoriesAdmin)
 admin.site.register(Genres, GenresAdmin)
-admin.site.register(Titles, TitlesAdmin)
+admin.site.register(Title, TitlesAdmin)

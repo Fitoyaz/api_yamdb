@@ -7,7 +7,7 @@ from rest_framework.routers import Route
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.views import TokenRefreshView
 
-from api.views import CategoriesViewSet
+from api.views import CategoryViewSet
 from api.views import GenresViewSet
 from api.views import GenreDelViewSet
 from api.views import MeDetail
@@ -15,7 +15,7 @@ from api.views import ReviewCommentDetailViewSet
 from api.views import ReviewDetailViewSet
 from api.views import return_token
 from api.views import send_code
-from api.views import TitlesViewSet
+from api.views import TitleViewSet
 from api.views import UserViewSet
 
 router_v1 = DefaultRouter()
@@ -31,14 +31,14 @@ router_v1.register(
     ReviewCommentDetailViewSet,
     basename="reviews_comments"
 )
-router_v1.register('categories', CategoriesViewSet, basename='category')
+router_v1.register('categories', CategoryViewSet, basename='category')
 router_v1.register('genres', GenresViewSet, basename='genre')
 router_v1.register(
     'genres/<slug:slug>/',
     GenreDelViewSet,
     basename='del_genre'
     )
-router_v1.register('titles', TitlesViewSet, basename='title')
+router_v1.register('titles', TitleViewSet, basename='title')
 
 urlpatterns = [
 

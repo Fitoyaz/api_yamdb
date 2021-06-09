@@ -32,10 +32,10 @@ from api.filters import TitleFilter
 
 from api.mine_viewsets import ListCreateDestroyViewSet
 
-from api.models import Categories
+from api.models import Category
 from api.models import ConfCode
 from api.models import Genres
-from api.models import Titles
+from api.models import Title
 from api.models import Review
 from api.models import User
 
@@ -43,7 +43,7 @@ from api.permissions import IsAdminOrReadOnly
 from api.permissions import IsAdminRole
 from api.permissions import IsStaffOrOwnerOrReadOnly
 
-from api.serializers import CategoriesSerializer
+from api.serializers import CategorySerializer
 from api.serializers import CommentsSerializer
 from api.serializers import GenresSerializer
 from api.serializers import MeSerializer
@@ -121,11 +121,11 @@ class ReviewDetailViewSet(viewsets.ModelViewSet):
     permission_classes = [IsStaffOrOwnerOrReadOnly]
 
     def get_queryset(self):
-        title = get_object_or_404(Titles, pk=self.kwargs.get('title_id'))
+        title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
         return title.reviews.all()
 
     def perform_create(self, serializer):
-        title = get_object_or_404(Titles, pk=self.kwargs.get('title_id'))
+        title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
         serializer.save(author=self.request.user, title=title)
 
 
@@ -150,9 +150,9 @@ class ReviewCommentDetailViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user, review=review)
 
 
-class CategoriesViewSet(ListCreateDestroyViewSet):
-    queryset = Categories.objects.all()
-    serializer_class = CategoriesSerializer
+class CategoryViewSet(ListCreateDestroyViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
 
 
 class GenresViewSet(ListCreateDestroyViewSet):
@@ -170,8 +170,8 @@ class GenreDelViewSet(mixins.DestroyModelMixin,  # DELETE-запросы
         return queryset
 
 
-class TitlesViewSet(viewsets.ModelViewSet):
-    queryset = Titles.objects.all()
+class TitleViewSet(viewsets.ModelViewSet):
+    queryset = Title.objects.all()
     pagination_class = PageNumberPagination
     permission_classes = [IsAdminOrReadOnly]
     filter_backends = [DjangoFilterBackend]
