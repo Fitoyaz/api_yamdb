@@ -138,12 +138,12 @@ class Comment(models.Model):
         verbose_name='Описание комментария',
         help_text='Напишите комментарий',
     )
-    created = models.DateTimeField(
+    pub_date = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True
     )
 
     class Meta:
-        ordering = ["created"]
+        ordering = ["pub_date"]
 
 
 class Category(models.Model):
