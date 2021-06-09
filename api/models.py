@@ -17,6 +17,9 @@ class User(AbstractUser):
     role = models.CharField(max_length=50, choices=ROLES, default='user')
     bio = models.TextField(max_length=500, null=True)
 
+    class Meta:        
+        ordering = ['username']
+
 
 class ConfCode(models.Model):
     user = models.OneToOneField(

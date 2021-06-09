@@ -20,6 +20,7 @@ from rest_framework.decorators import permission_classes
 from rest_framework.pagination import PageNumberPagination
 
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated
 
 from rest_framework.response import Response
 
@@ -119,17 +120,36 @@ def MeDetail(request):
 
 class ReviewDetailViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewsSerializer
-    permission_classes = [IsStaffOrOwnerOrReadOnly]
-
+    def get_permissions(self):
+        if self.action == 'create':
+            permission_classes = [IsAuthenticated]
+        else:
+            permission_classes = [IsStaffOrOwnerOrReadOnly]
+        return [permission() for permission in permission_classes]
+        
     def get_queryset(self):
         title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
         return title.reviews.all()
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
+        author = request.user
+        if Review.objects.filter(title=title, author=author).exists():
+            return Response({"message": "You cant wite rewiew twice"}, status=status.HTTP_400_BAD_REQUEST)
+        serializer.author = author
+        serializer.title = title
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
     def perform_create(self, serializer):
         title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
         serializer.save(author=self.request.user, title=title)
+   
 
-
+    
 class ReviewCommentDetailViewSet(viewsets.ModelViewSet):
     serializer_class = CommentsSerializer
     permission_classes = [IsStaffOrOwnerOrReadOnly]
