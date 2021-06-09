@@ -55,9 +55,6 @@ class Title(models.Model):
         'Genre',
         related_name='title',
         symmetrical=False,
-        #db_table='title-genre-table',
-        # through='Genre_Titles',
-        # through_fields=('title', 'genre', ),
         verbose_name='Slug жанра',
         help_text='Выберите жанр произведения'
     )
@@ -128,7 +125,6 @@ class Review(models.Model):
     class Meta:
         unique_together = ["title", "author"]
         ordering = ["pub_date"]
-
 
 
 class Comment(models.Model):
