@@ -1,51 +1,26 @@
 import string
-from django.db.models import Avg
-from django.core.mail import send_mail
 
 from django.contrib.auth.tokens import default_token_generator
-
-from django_filters.rest_framework import DjangoFilterBackend
-
+from django.core.mail import send_mail
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
-
-from rest_framework import mixins
-from rest_framework import permissions
-from rest_framework import status
-from rest_framework import viewsets
-
-from rest_framework.decorators import api_view
-from rest_framework.decorators import permission_classes
-
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import mixins, permissions, status, viewsets
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.pagination import PageNumberPagination
-
 from rest_framework.permissions import IsAuthenticated
-
 from rest_framework.response import Response
-
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from api.filters import TitleFilter
-
 from api.mine_viewsets import ListCreateDestroyViewSet
-
-from api.models import Category
-from api.models import Genre
-from api.models import Title
-from api.models import Review
-from api.models import User
-
-from api.permissions import IsAdminOrReadOnly
-from api.permissions import IsAdminRole
-from api.permissions import IsStaffOrOwnerOrReadOnly
-
-from api.serializers import CategorySerializer
-from api.serializers import CommentsSerializer
-from api.serializers import GenresSerializer
-from api.serializers import MeSerializer
-from api.serializers import ReviewsSerializer
-from api.serializers import TitlesCreateSerializer
-from api.serializers import TitlesReadSerializer
-from api.serializers import UserSerializer
+from api.models import Category, Genre, Review, Title, User
+from api.permissions import (IsAdminOrReadOnly, IsAdminRole,
+                             IsStaffOrOwnerOrReadOnly)
+from api.serializers import (CategorySerializer, CommentsSerializer,
+                             GenresSerializer, MeSerializer, ReviewsSerializer,
+                             TitlesCreateSerializer, TitlesReadSerializer,
+                             UserSerializer)
 
 
 @api_view(['POST'])

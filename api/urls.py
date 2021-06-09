@@ -1,21 +1,12 @@
-from django.urls import include
-from django.urls import path
-
+from django.urls import include, path
 from rest_framework.routers import DefaultRouter
+from rest_framework_simplejwt.views import (TokenObtainPairView,
+                                            TokenRefreshView)
 
-from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework_simplejwt.views import TokenRefreshView
-
-from api.views import CategoryViewSet
-from api.views import GenresViewSet
-from api.views import GenreDelViewSet
-from api.views import MeDetail
-from api.views import ReviewCommentDetailViewSet
-from api.views import ReviewDetailViewSet
-from api.views import return_token
-from api.views import send_code
-from api.views import TitleViewSet
-from api.views import UserViewSet
+from api.views import (CategoryViewSet, GenreDelViewSet, GenresViewSet,
+                       MeDetail, ReviewCommentDetailViewSet,
+                       ReviewDetailViewSet, TitleViewSet, UserViewSet,
+                       return_token, send_code)
 
 router_v1 = DefaultRouter()
 
