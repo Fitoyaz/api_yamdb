@@ -97,6 +97,7 @@ class BaseTitleSerializer(serializers.ModelSerializer):
 
 class TitlesCreateSerializer(BaseTitleSerializer):
     rating = serializers.SerializerMethodField(read_only=True)
+
     genre = serializers.SlugRelatedField(
         many=True,
         slug_field='slug',

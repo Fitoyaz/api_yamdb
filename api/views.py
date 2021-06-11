@@ -22,6 +22,8 @@ from api.serializers import (CategorySerializer, CommentsSerializer,
                              TitlesCreateSerializer, TitlesReadSerializer,
                              UserSerializer)
 
+from api_yamdb.settings import SEND_MAIL
+
 
 @api_view(['POST'])
 def send_code(request):
@@ -35,7 +37,7 @@ def send_code(request):
     send_mail(
         'confirmation',
         confirmation_code,
-        'from@example.com',
+        SEND_MAIL,
         [f'{newmail}'],
         fail_silently=False,
     )
@@ -50,7 +52,7 @@ def return_token(request):
     confirmation_code = request.data.get('confirmation_code')
     user = get_object_or_404(User, email=email)
     if default_token_generator.check_token(user=user, token=confirmation_code):
-        if user.is_active == 'False':
+        if not user.is_active:
             user.is_active = True
             cleaner = str.maketrans(dict.fromkeys(string.punctuation))
             user.username = email.translate(cleaner)
@@ -134,16 +136,12 @@ class ReviewCommentDetailViewSet(viewsets.ModelViewSet):
         return review.comments.all()
 
     def perform_create(self, serializer):
-        title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
         review = get_object_or_404(
             Review,
             pk=self.kwargs.get('review_id'),
             title=self.kwargs.get('title_id')
         )
         serializer.save(author=self.request.user, review=review)
-        int_rating = Review.objects.filter(title=title).aggregate(Avg('score'))
-        title.rating = int_rating['score__avg']
-        title.save(update_fields=["rating"])
 
     def perform_update(self, serializer):
         serializer.save()
