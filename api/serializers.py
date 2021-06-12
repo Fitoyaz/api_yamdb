@@ -3,6 +3,7 @@ from rest_framework import serializers, validators
 from rest_framework.fields import CharField, EmailField, ReadOnlyField
 
 from api.models import Category, Comment, Genre, Review, Title, User
+from rest_framework.validators import UniqueTogetherValidator
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -42,10 +43,18 @@ class ReviewsSerializer(serializers.ModelSerializer):
     title = serializers.SlugRelatedField(
         slug_field='id', read_only=True)
 
+    def validate(self, data):
+        if self.context['request'].method == 'POST':
+            author = self.context['request'].user
+            title_id = self.context['view'].kwargs['title_id']
+            if Review.objects.filter(author=author, title__id=title_id).exists():
+                raise serializers.ValidationError('you have already reviewed this title')
+        return data
+
     class Meta:
         fields = '__all__'
         model = Review
-
+        
 
 class CommentsSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
