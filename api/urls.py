@@ -1,4 +1,5 @@
 from django.urls import include, path
+from rest_framework.decorators import api_view
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import (TokenObtainPairView,
                                             TokenRefreshView)
@@ -31,7 +32,7 @@ router_v1.register(
     basename='del_genre')
 
 urlpatterns = [
-    path('v1/users/me/', MeDetail, name='send_code'),
+    path('v1/users/me/',UserViewSet.as_view({'get':'me', 'patch':'me', 'delete':'me'}), name='MeDetail'),
     path('v1/auth/email/', send_code, name='send_code'),
     path('v1/auth/token/', return_token, name='send_token'),
     path('v1/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

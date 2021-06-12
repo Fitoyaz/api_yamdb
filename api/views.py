@@ -6,7 +6,7 @@ from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, permissions, status, viewsets
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -67,10 +67,30 @@ def return_token(request):
 
 
 class UserViewSet(viewsets.ModelViewSet):
+    def get_permissions(self):
+        if self.action == 'me':
+            permission_classes = [IsAuthenticated]
+        else:
+            permission_classes = [IsAdminRole]
+        return [permission() for permission in permission_classes]
     permission_classes = [IsAdminRole]
     queryset = User.objects.all()
     serializer_class = UserSerializer
     lookup_field = 'username'
+
+    @action(detail=False, methods=['PATCH', 'GET'])
+    def me(self, request):
+        user = request.user
+        serializer = MeSerializer(user)
+        if request.method == 'GET':
+            serializer = MeSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        if request.method == 'PATCH':
+            serializer = MeSerializer(user, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({"message": "you cant delite your account"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 @api_view(['PATCH', 'GET'])
