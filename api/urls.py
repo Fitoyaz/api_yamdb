@@ -5,7 +5,7 @@ from rest_framework_simplejwt.views import (TokenObtainPairView,
                                             TokenRefreshView)
 
 from api.views import (CategoryViewSet, GenreDelViewSet, GenresViewSet,
-                       MeDetail, ReviewCommentDetailViewSet,
+                       ReviewCommentDetailViewSet,
                        ReviewDetailViewSet, TitleViewSet, UserViewSet,
                        return_token, send_code)
 

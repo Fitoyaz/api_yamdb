@@ -93,22 +93,6 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response({"message": "you cant delite your account"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-@api_view(['PATCH', 'GET'])
-@permission_classes([permissions.IsAuthenticated])
-def MeDetail(request):
-    user = request.user
-    serializer = MeSerializer(user)
-    if request.method == 'GET':
-        serializer = MeSerializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    if request.method == 'PATCH':
-        serializer = MeSerializer(user, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 class ReviewDetailViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewsSerializer
 
