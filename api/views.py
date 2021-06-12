@@ -67,18 +67,12 @@ def return_token(request):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    def get_permissions(self):
-        if self.action == 'me':
-            permission_classes = [IsAuthenticated]
-        else:
-            permission_classes = [IsAdminRole]
-        return [permission() for permission in permission_classes]
     permission_classes = [IsAdminRole]
     queryset = User.objects.all()
     serializer_class = UserSerializer
     lookup_field = 'username'
 
-    @action(detail=False, methods=['PATCH', 'GET'])
+    @action(detail=False, methods=['PATCH', 'GET'], permission_classes = [IsAuthenticated])
     def me(self, request):
         user = request.user
         serializer = MeSerializer(user)
