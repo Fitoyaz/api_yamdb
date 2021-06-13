@@ -38,7 +38,6 @@ class Title(models.Model):
         verbose_name='Название',
         help_text='Напишите здесь название произведения',
     )
-    rating = models.FloatField(default=None, null=True, blank=True)
     year = models.IntegerField(
         verbose_name='Год выпуска',
         help_text='Напишите здесь год выпуска произведения',

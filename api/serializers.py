@@ -47,8 +47,10 @@ class ReviewsSerializer(serializers.ModelSerializer):
         if self.context['request'].method == 'POST':
             author = self.context['request'].user
             title_id = self.context['view'].kwargs['title_id']
-            if Review.objects.filter(author=author, title__id=title_id).exists():
-                raise serializers.ValidationError('you have already reviewed this title')
+            if Review.objects.filter(author=author,
+                                     title__id=title_id).exists():
+                raise serializers.ValidationError(
+                    'you have already reviewed this title')
         return data
 
     class Meta:
@@ -91,22 +93,7 @@ class GenresSerializer(serializers.ModelSerializer):
         }
 
 
-class BaseTitleSerializer(serializers.ModelSerializer):
-    rating = serializers.SerializerMethodField()
-
-    def get_rating(self, obj):
-        if obj.reviews.exists():
-            return obj.reviews.aggregate(rating=Avg('score')).get('rating')
-        return None
-
-    class Meta:
-        fields = '__all__'
-        model = Title
-
-
-class TitlesCreateSerializer(BaseTitleSerializer):
-    rating = serializers.SerializerMethodField(read_only=True)
-
+class TitlesCreateSerializer(serializers.ModelSerializer):
     genre = serializers.SlugRelatedField(
         many=True,
         slug_field='slug',
@@ -119,24 +106,18 @@ class TitlesCreateSerializer(BaseTitleSerializer):
     )
 
     class Meta:
+        fields = (
+            'id', 'name', 'year', 'description', 'genre', 'category'
+        )
         model = Title
-        fields = ('id', 'name', 'year', 'rating', 'description', 'genre',
-                  'category')
-
-    def get_rating(self, title):
-        scores = Review.objects.filter(
-            title_id=title.id).aggregate(Avg('score'))
-
-        if scores:
-            return scores['score__avg']
-        return None
 
 
-class TitlesReadSerializer(BaseTitleSerializer):
+class TitlesReadSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     genre = GenresSerializer(many=True, read_only=True)
+    rating = serializers.IntegerField(read_only=True)
 
     class Meta:
+        fields = ('id', 'name', 'year', 'rating', 'description',
+                  'genre', 'category')
         model = Title
-        fields = ('id', 'name', 'year', 'description', 'genre', 'category',
-                  'rating')

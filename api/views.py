@@ -72,10 +72,10 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     lookup_field = 'username'
 
-    @action(detail=False, methods=['PATCH', 'GET'], permission_classes = [IsAuthenticated])
+    @action(detail=False, methods=['PATCH', 'GET'],
+            permission_classes=[IsAuthenticated])
     def me(self, request):
         user = request.user
-        serializer = MeSerializer(user)
         if request.method == 'GET':
             serializer = MeSerializer(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -84,7 +84,8 @@ class UserViewSet(viewsets.ModelViewSet):
             if serializer.is_valid():
                 serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response({"message": "you cant delite your account"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        return Response({"message": "you cant delite your account"},
+                        status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class ReviewDetailViewSet(viewsets.ModelViewSet):
@@ -127,11 +128,8 @@ class ReviewCommentDetailViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user, review=review)
 
     def perform_update(self, serializer):
-        serializer.save()
         title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
-        int_rating = Review.objects.filter(title=title).aggregate(Avg('score'))
-        title.rating = int_rating['score__avg']
-        title.save(update_fields=["rating"])
+        serializer.save(author=self.request.user, title=title)
 
 
 class CategoryViewSet(ListCreateDestroyViewSet):
@@ -155,7 +153,7 @@ class GenreDelViewSet(mixins.DestroyModelMixin,  # DELETE-запросы
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.all()
+    queryset = Title.objects.all().annotate(rating=Avg('reviews__score'))
     pagination_class = PageNumberPagination
     permission_classes = [IsAdminOrReadOnly]
     filter_backends = [DjangoFilterBackend]
@@ -165,3 +163,4 @@ class TitleViewSet(viewsets.ModelViewSet):
         if self.action == 'create' or self.action == 'partial_update':
             return TitlesCreateSerializer
         return TitlesReadSerializer
+
