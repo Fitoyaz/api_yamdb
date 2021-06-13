@@ -1,13 +1,11 @@
 from django.urls import include, path
-from rest_framework.decorators import api_view
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import (TokenObtainPairView,
                                             TokenRefreshView)
 
 from api.views import (CategoryViewSet, GenreDelViewSet, GenresViewSet,
-                       ReviewCommentDetailViewSet,
-                       ReviewDetailViewSet, TitleViewSet, UserViewSet,
-                       return_token, send_code)
+                       ReviewCommentDetailViewSet, ReviewDetailViewSet,
+                       TitleViewSet, UserViewSet, return_token, send_code)
 
 router_v1 = DefaultRouter()
 

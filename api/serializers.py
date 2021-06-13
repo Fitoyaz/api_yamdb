@@ -1,9 +1,8 @@
-from django.db.models import Avg
+
 from rest_framework import serializers, validators
 from rest_framework.fields import CharField, EmailField, ReadOnlyField
 
 from api.models import Category, Comment, Genre, Review, Title, User
-from rest_framework.validators import UniqueTogetherValidator
 
 
 class UserSerializer(serializers.ModelSerializer):
