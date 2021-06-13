@@ -29,7 +29,7 @@ router_v1.register(
     GenreDelViewSet,
     basename='del_genre')
 
-urlpatterns = [    
+urlpatterns = [
     path('v1/auth/email/', send_code, name='send_code'),
     path('v1/auth/token/', return_token, name='send_token'),
     path('v1/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

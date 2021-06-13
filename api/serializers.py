@@ -55,7 +55,7 @@ class ReviewsSerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
         model = Review
-        
+
 
 class CommentsSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
