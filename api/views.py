@@ -8,7 +8,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, \
+    IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -90,13 +91,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class ReviewDetailViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewsSerializer
-
-    def get_permissions(self):
-        if self.action == 'create':
-            permission_classes = [IsAuthenticated]
-        else:
-            permission_classes = [IsStaffOrOwnerOrReadOnly]
-        return [permission() for permission in permission_classes]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsStaffOrOwnerOrReadOnly]
 
     def get_queryset(self):
         title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
